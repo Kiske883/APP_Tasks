@@ -9,7 +9,12 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
+                    <h1 class="text-3xl text-emerald-800">Bienvenido al gestor de tareas</h1>
+                    <h2 class="text-xl text-emerald-800">{{ $tasks->count()}} tareas registradas</h2>
+                    @foreach($tasks as $task)
+                        <h3>{{ $task->title}}</h3>
+                        <h3>{{ $task->description}}</h3>
+                    @endforeach
                 </div>
             </div>
         </div>
