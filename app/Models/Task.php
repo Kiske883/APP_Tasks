@@ -14,8 +14,9 @@ class Task extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'description'
+        'title',
+        'description',
+        'user_id'
     ];
 
     public function user() : BelongsTo {
