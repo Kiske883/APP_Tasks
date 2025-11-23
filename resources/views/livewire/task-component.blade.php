@@ -36,7 +36,9 @@
                                 wire:click.prevent="openEditModal({{ $task->id }})">
                                 Editar
                             </button>
-                            <button class="px-4 py-1 bg-gradient-to-r from-red-500 to-pink-600 text-white font-semibold rounded-lg shadow-md hover:from-pink-600 hover:to-red-500 hover:scale-105 transform transition duration-300">
+                            <button class="px-4 py-1 bg-gradient-to-r from-red-500 to-pink-600 text-white font-semibold rounded-lg shadow-md hover:from-pink-600 hover:to-red-500 hover:scale-105 transform transition duration-300"
+                                wire:click.prevent="deleteTask({{ $task->id }})"
+                                wire:confirm="Deseas eliminar la tarea {{$task->title}}">
                                 Borrar
                             </button>
                         </td>
