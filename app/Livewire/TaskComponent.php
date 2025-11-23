@@ -14,6 +14,10 @@ class TaskComponent extends Component
     public $description;
     public $modal = false;
 
+    public $shareModal = false;
+    public $taskToShare; // almacena la tarea que queremos compartir
+    public $selectedUser; // almacena el id del usuario seleccionado    
+
     public function mount()
     {
         $this->tasks = $this->getTask();
@@ -97,6 +101,9 @@ class TaskComponent extends Component
             'description' => 'nullable|string',
         ]);
 
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         if ($this->taskId) {
             // actualizar
             $task = Task::find($this->taskId);
@@ -105,11 +112,10 @@ class TaskComponent extends Component
                 'description' => $this->description,
             ]);
         } else {
-            // crear
-            Task::create([
+            // crear tarea propia
+            $user->ownTasks()->create([
                 'title' => $this->title,
                 'description' => $this->description,
-                'user_id' => Auth::id(),
             ]);
         }
 
@@ -122,5 +128,29 @@ class TaskComponent extends Component
     {
         Task::where('id', $taskId)->where('user_id', Auth::id())->delete();
         $this->tasks = $this->getTask();
+    }
+
+    public function openShareModal($taskId)
+    {
+        $this->taskToShare = $taskId;
+        $this->selectedUser = null; // reiniciamos selección
+        $this->shareModal = true;
+    }
+
+    public function shareTask()
+    {
+        if (!$this->selectedUser) {
+            $this->dispatchBrowserEvent('notify', ['type' => 'error', 'message' => 'Debes seleccionar un usuario']);
+            return;
+        }
+
+        $task = \App\Models\Task::find($this->taskToShare);
+        $user = \App\Models\User::find($this->selectedUser);
+
+        // Aquí defines cómo quieres compartir la tarea. Por ejemplo, guardarla en una tabla pivot:
+        $task->sharedWith()->syncWithoutDetaching([$user->id]);
+
+        $this->shareModal = false;
+        session()->flash('message', 'Tarea compartida con ' . $user->name);
     }
 }
